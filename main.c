@@ -3,7 +3,7 @@
 
 #include "linked_list.h"
 #include "stack_queue.h"
-#include "hash_table.h"
+#include "hash_table.h"   // after linked list
 
 
 /******  main test ******/
