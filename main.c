@@ -13,7 +13,10 @@ void test_LinkedList(void)
 
 	printf("Linked list implementation test: \n\n");
 	
-	List * list = list_CreateList();
+	Node* node; 
+	
+	node = list_CreateNode(0);
+	List * list = list_CreateList(node);
 	printf("New list node created at %p \n", list);
 	
 	list_printList(list);
@@ -23,7 +26,7 @@ void test_LinkedList(void)
 	printf("New list is: \n");
 	list_printList(list);
 
-	Node* node = list_CreateNode(-3);
+	node = list_CreateNode(-3);
 	printf("Inserting new node (-3) to head: \n");
 	list_InsertNodeToHead(list, node);	
 	printf("New list is: \n");
@@ -76,7 +79,7 @@ void test_LinkedList(void)
 int main()
 {
 	
-//	test_LinkedList();
+	test_LinkedList();
 
 
 // test hash table
@@ -88,17 +91,17 @@ int main()
 	int hashSize = 10; 
 
 	printf("Creating Hash Table of size %d \n", hashSize);
-	HashTable_t* hashTable = malloc(sizeof(HashTable_t));
+	HashTable* hashTable = malloc(sizeof(HashTable));
 	ht_Create(hashTable, hashSize);
 
 	for (i=0; i<hashSize; i++){
-		printf("Data of node %d is %d \n", i, 
-			(hashTable->hTable+i)->data);
+		printf("<Key, Val> of node %d is <%d, %d> \n", i, 
+			(hashTable->htNodeHead+i)->key, 
+			(hashTable->htNodeHead+i)->value);
 	}
 
 	for (i=0; i<hashSize*2; i++){
-		printf("Index of key %d is %d \n", i, 
-				ht_HashFunction(hashTable, i));
+		ht_Insert(hashTable, i, 1);
 	}
 	
 	return 1;

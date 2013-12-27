@@ -2,17 +2,13 @@
 * Implements linked list operations
 */
 
-//TODO: implement in C++ class
-//TODO: add error handling
-
-
 
 typedef int DataType; //TODO: generalize to any data type 
 
 typedef struct node{
 	DataType data;  
 	struct node *next;
-} Node;
+} __attribute__((packed)) Node;
 
 
 typedef struct list{
@@ -29,11 +25,11 @@ Node* list_CreateNode(DataType value)
 	return node;
 }
 
-// create a linked list 
-List* list_CreateList(void)
+// create a linked list: given node is list head
+List* list_CreateList(Node* node)
 {	
 	List* list = malloc(sizeof(List));
-	list->listHead = list_CreateNode(0);
+	list->listHead = node;
 	return list;
 }
 

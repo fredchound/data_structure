@@ -1,1 +1,27 @@
-Test
+**** INTRODUCTION: 
+
+Implement some basic data structures:
+
+* Implemented: 
+ -linked list
+ -hash table: now it is built on top of linked list
+
+* To-be implemented: 
+ -stack/queue
+ -BST/RBT
+
+Code structure: 
+ * Each structure is implemented in the corresponding header file. 
+ * Main file is used for testing of implemented structures.
+
+
+**** TO-DO: 
+
+- Linked list: generalize linked list to any data type
+- Hash table should contain <key, value> pair
+- HT: first node is always dummy, use it to hold some useful info?
+
+- implement in C++ class
+- add error handling
+
+- Other data structures
