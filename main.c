@@ -95,15 +95,24 @@ int main()
 	ht_Create(hashTable, hashSize);
 
 	for (i=0; i<hashSize; i++){
-		printf("<Key, Val> of node %d is <%d, %d> \n", i, 
+		printf("<Key, Val> of node head %d is <%d, %d> \n", i, 
 			(hashTable->htNodeHead+i)->key, 
 			(hashTable->htNodeHead+i)->value);
 	}
 
 	for (i=0; i<hashSize*2; i++){
-		ht_Insert(hashTable, i, 1);
+		ht_Insert(hashTable, i, 100+i);
 	}
 	
-	return 1;
+	ht_Search(hashTable, 12); //present
+	ht_Search(hashTable, 32); // not present
 
+    ht_PrintTable(hashTable, 7);	
+	ht_Delete(hashTable, 7); 
+    ht_PrintTable(hashTable, 7);
+    ht_PrintTable(hashTable, 16);
+	ht_Delete(hashTable, 16);
+    ht_PrintTable(hashTable, 16);
+
+	return 1;
 }

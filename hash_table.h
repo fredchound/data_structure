@@ -2,9 +2,12 @@
 * Implements harsh table data structure
 */
 
+// TODO: how to handle redundant key
+// TODO: how about double linked list for hash list?
+
 
 // data structure for hash table
-// follows from linked list structs
+// each key is mapped to a linked list
 
 
 //hash node holds <key, value> pair
@@ -19,6 +22,9 @@ typedef struct hash_table {
 	HashNode* htNodeHead; // point to node head for each list of ht entry
 } HashTable;
 
+typedef struct hash_list{
+	HashNode* listHead;
+} HashList;
 
 // create a hash node 
 HashNode* ht_CreateNode(DataType key, DataType value)
@@ -48,8 +54,8 @@ void ht_Create(HashTable* hashTable, int hashSize)
 	for(i = 0; i<hashSize; i++){
 		p = (HashNode*)(hashTable->htNodeHead+i);
 		p->next = NULL;
-		p->key = NULL;  // TODO: first node is always dummy now.
-		p->value = NULL; 
+		p->key = 0;  // TODO: first node is always dummy now.
+		p->value = 0; 
 		printf("Initializing node %d at %p \n", i, p);
 	}
 
@@ -63,13 +69,8 @@ static unsigned int ht_HashFunction(HashTable* hashTable, DataType key)
 	return index;
 }
 
-
-typedef struct hash_list{
-	HashNode* listHead;
-} HashList;
-
 // given a hash node, create hash list
-HashList* hashList_CreateList(HashNode* hashNode)
+static HashList* hashList_CreateList(HashNode* hashNode)
 {	
 	HashList* hashList = malloc(sizeof(HashList));
 	hashList->listHead = hashNode;
@@ -77,7 +78,7 @@ HashList* hashList_CreateList(HashNode* hashNode)
 }
 
 // get the last node of the hash list
-HashNode* hashList_GetTail(HashList* hashList)
+static HashNode* hashList_GetTail(HashList* hashList)
 {	
 	HashNode* p = hashList->listHead;	
 	while (p->next!=NULL){
@@ -85,8 +86,9 @@ HashNode* hashList_GetTail(HashList* hashList)
 	}
 	return p;	
 }
+
 // insert value into tail of hash list
-void hashList_Add(HashList* hashList, DataType key, DataType value)
+static void hashList_Add(HashList* hashList, DataType key, DataType value)
 {	
 	HashNode* newNode = ht_CreateNode(key, value);
 	HashNode* p = hashList_GetTail(hashList);	
@@ -95,7 +97,7 @@ void hashList_Add(HashList* hashList, DataType key, DataType value)
 
 
 // print the entire list
-void hashList_PrintList(HashList* list)
+static void hashList_PrintList(HashList* list)
 {	
 	HashNode* p = list->listHead;
 	int i = 0;
@@ -121,18 +123,96 @@ void ht_Insert(HashTable* hashTable, DataType key, DataType value)
 
 	hashList_Add(hashList, key, value);
 
-	printf("\nData with key %d is inserted to %dth list. \n", key, index);
+	printf("\nData with <key, val> <%d, %d> is inserted to %dth list. \n", 
+                   key, value, index);
 	hashList_PrintList(hashList);	
 }
 
+// search for an element: given key, return pt to hash node
+HashNode* ht_Search(HashTable* hashTable, DataType key)
+{
+	unsigned int index = ht_HashFunction(hashTable, key);
+	
+	HashNode* p = (hashTable->htNodeHead+index); 
+	HashNode* result = NULL;
+    
+    p = p->next;
+    while(p){
+        if(p->key==key) {
+            result = p;
+            break;
+        }    
+        p = p->next;                               
+    }
+    
+    if(result)
+        printf("Data with key %d is found with value %d. \n", 
+                   key, result->value);
+    else printf("Key %d not found. \n", key);
+    
+    return result;
+}
 
+// delete tail node of list corresponding to key
+static void hashList_DeleteTail(HashTable* hashTable, DataType key)
+{
+	unsigned int index = ht_HashFunction(hashTable, key);
+	
+	printf("Deleting tail node. \n");
+	
+	HashNode* prev = (hashTable->htNodeHead+index);   
+    HashNode* p = prev->next;
+    while(p->next){
+             prev = p;
+             p = p->next;
+    }
+    prev->next = NULL;
+    free(p);          
+}
 
+// Delete a node given its key: return TRUE if node found and deleted
+int ht_Delete(HashTable* hashTable, DataType key)
+{
+	
+	HashNode* p;
+    HashNode* q;
+    
+    q = ht_Search(hashTable, key);// note that q can never be the dummy list head
+    
+    if(q) {
+  	
+	    p = q->next;    
+	    if(p){
+              // not tail node
+	          q->key = p->key;
+	          q->value = p->value;
+	          q->next = p->next;
+	          free(p);
+        } else{ 
+              // tail node of list
+              hashList_DeleteTail(hashTable, key);
+        }   
+        printf("Node with key %d deleted.\n", key);          
+        return 1;
+        
+    } else {
+         printf("Key %d not found. \n", key);
+         return 0;
+    }
+}
 
-// search for an element: given key, return pt to element
+// print entire hash table
+void ht_PrintTable(HashTable* hashTable, DataType key)
+{
+    unsigned int index = ht_HashFunction(hashTable, key);
+	
+	HashNode* p = (hashTable->htNodeHead+index); 
 
-
-// free table
-
-
-
+    printf("List correspoding to key %d", key);
+    while(p){
+        printf("-<%d, %d>-", p->key, p->value);
+        p = p->next;                               
+    }
+    printf("\n");   
+}
 
