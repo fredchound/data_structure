@@ -9,6 +9,7 @@ Implement some basic data structures:
 * To-be implemented: 
  -stack/queue
  -BST/RBT
+ -depth first search tree: traversal
 
 Code structure: 
  * Each structure is implemented in the corresponding header file. 
